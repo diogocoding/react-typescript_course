@@ -35,7 +35,7 @@
 
     </style>
 </head>
-<body class='text-(--text) font-(--font-sans)'>
+<body class='min-h-screen bg-linear-[180deg,_#807ECE_0%,_#8E7ECE_100%] text-(--text) font-(--font-sans)'>
     <div id= "root" > </div> <!-- essa div será responsável por renderizar a aplicação no react -->
 
 
@@ -114,6 +114,7 @@
         </Text>
     )
     }
+    
     function Card({children, className, ...props}){
         return (
             <div className ={`
@@ -125,62 +126,129 @@
             </div>
         )
     }
-
-
-    function Calculator(){
-        return(
-        <Card className='flex flex-col gap-[1.625rem]w-[22.25rem]
-        pt-14 px-8 pb-8
-        '>
-        </Card>
-
-        )
-    }
-
+    
     function CalculatorDisplay({
         operation, result
     }){
         return(
             <div className={`
-                flex flex-col gap-2 px-[1.375rem]
-                cursor-default select-none
+            flex flex-col gap-2 px-[1.375rem]
+            cursor-default select-none
                 `}>
-            <Text as='div'
+
+
+                <Text 
+                as='div' 
                 variant='muted'
-                className='flex items-center justify-end' >
+                className='flex items-center justify-end'    >
                     {operation}
                     </Text>
-            
-            <div className='{`
+                    <div className='{`
                 flex items-center justify-between
                 `}'>
-
                 <Text variant='muted'>=</Text>
                 <Text variant='blast'>{result}</Text>
-               </div>
- 
+                        </div>
             </div>
         )
     }
+    
+    function Calculator(){
+        return(
+        <Card className='
+        flex flex-col gap-[1.625rem] w-[22.25rem]
+        pt-14 px-8 pb-8
+        '>
+       
+    <CalculatorDisplay operation='1+1' result='2'/>
 
+<div className='flex flex-col gap-3'>
+    
+    <div className='flex gap-3'>
+        <Button className='w-16 h-16'>CE</Button>
+        <Button className ='flex-1 h-16'>C</Button>
+        <Button variant='primary' className='w-16 h-16'>/</Button>
+
+    </div>
+
+    <div className='flex gap-3'>
+        <Button className='w-16 h-16'>7</Button>
+        <Button className='w-16 h-16'>8</Button>
+        <Button className='w-16 h-16'>9</Button>
+        <Button variant='primary' className='w-16 h-16'>X</Button>
+
+    </div>
+    <div className='flex gap-3'>
+        <Button className='w-16 h-16'>4</Button>
+        <Button className='w-16 h-16'>5</Button>
+        <Button className='w-16 h-16'>6</Button>
+        <Button variant='primary' className='w-16 h-16'>-</Button>
+
+    </div>
+    <div className='flex gap-3'>
+        <Button className='w-16 h-16'>1</Button>
+        <Button className='w-16 h-16'>2</Button>
+        <Button className='w-16 h-16'>3</Button>
+        <Button variant='primary' className='w-16 h-16'>+</Button>
+
+    </div>
+     <div className='flex gap-3'>
+        <Button className='flex-1 h-16'>0</Button>
+        <Button className='w-16 h-16'>.</Button>
+        <Button variant='primary' className='w-16 h-16'>=</Button>
+
+    </div>
+    </div>
+        </Card>
+
+        )
+    }
+   
+    function OperationHistory(){
+        return(
+            <Card className='
+            w-full
+            py-10 px-8 
+            '>
+                <Text 
+                as='h1' 
+                variant='heading' 
+                className='mb-4'
+                >Histórico de operações</Text>
+                
+                    <ul className='flex flex-col gap-3'>
+                    <Text as='li' >1+1 = 2</Text>
+                    <Text as='li' >2+2 = 4</Text>
+                    <Text as='li' >3+3 = 6</Text>
+                    <Text as='li' >4+4 = 8</Text>
+                    <Text as='li' >5+5 = 10</Text>
+                    </ul>
+                
+
+            </Card>
+        )
+    }
+   
     function App(){
         return (
-        <main className='py-28 px-4'>
-            <Button>CE</Button>
-            <Button variant='primary'>CE</Button>
-
-            <Card>
-                Tesgando o card
-                <CalculatorDisplay operation='1+1' result='2'/>
-                <div className="flex flex-col gap-3">
-                    </div>
-            </Card>
+        <main className={` 
             
+            py-28 px-4 sm:px-10
+            flex flex-col sm:flex-row
+            items-center sm:items-stretch
+            gap-2
+            `}>
+            <Calculator />
+            <OperationHistory className='mt-10' />
         </main>
 
         )
 
     }
+
+    
+
+    
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />)
 
