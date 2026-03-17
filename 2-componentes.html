@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocketseat - react.js - fundamentos</title>
+</head>
+<body>
+    <div id= "root" > </div> <!-- essa div será responsável por renderizar a aplicação no react -->
+
+
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+
+
+<script type="text/babel">  
+    function Button () {
+        return (
+            <button className='px-3 py-2 bg-purple-500 text-white rounded'>
+                Botão
+            </button>
+
+        )
+    }
+
+    function App() {
+        return (
+        <main className="flex gap-2 p-3"> 
+            Hello world 
+            <Button />
+            <Button />
+            <Button />
+        </main>
+        )
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+       
+    <>
+    <App /> 
+    <h1>Hello Worldy</h1>
+    </>      
+
+    )
+</script>
+
+</body>
+</html>
