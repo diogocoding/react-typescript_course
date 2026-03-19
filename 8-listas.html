@@ -17,12 +17,30 @@
 
 <script type="text/babel"> 
 
+
+
+function ListNames() {
+  const [names] = React.useState(["Ana", "Bruno", "Carlos", "Aline"]);
+
+  return (
+    <ul>
+      {names.map((name, index) => (
+        <li key={`${index}-${name}`}>{name}</li>
+      ))}
+    </ul>
+  );
+}
+
+
+
 function App(){
     return(
-        <main class='p-3'>...</main>
+        <main>
+            <ListNames />
+        </main>
     )
 }
-ReactDom.createRoot(document.getElementById('root')).render(<App />) //aqui é onde a mágica acontece, o react pega a div com id root e renderiza o componente App dentro dela
+ReactDOM.createRoot(document.getElementById('root')).render(<App />) //aqui é onde a mágica acontece, o react pega a div com id root e renderiza o componente App dentro dela
 </script>
 
 </body>
