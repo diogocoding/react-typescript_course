@@ -154,7 +154,7 @@
   ],
   [
     { input: "0", className: "flex-1 h-16" },
-    { input: "." },
+    { input: "," },
     { input: "=", variant: "primary" }
   ]
 ];
@@ -173,14 +173,14 @@
                 <Text 
                 as='div' 
                 variant='muted'
-                className='flex items-center justify-end'    >
-                    {operation}
+                className='flex items-center justify-end h-7'    >
+                    {result && operation}
                     </Text>
-                    <div className='{`
-                flex items-center justify-between
-                `}'>
+                    <div className={`
+                flex items-center justify-between h-9
+                `}>
                 <Text variant='muted'>=</Text>
-                <Text variant='blast'>{result}</Text>
+                <Text variant='blast'>{result || operation}</Text>
                         </div>
             </div>
         )
@@ -188,9 +188,57 @@
     
     function Calculator(){
 
-        function handleInputClick(input){
-            console.log(input)
+        const [operation, setOperation] = React.useState("");
+        const [result, setResult] = React.useState("");
+
+        function handleInputClick(input) {
+    // 1. Limpar tudo (C)
+    if (input === "C") {
+        setOperation('');
+        setResult('');
+        return;
+    }
+
+    // 2. Apagar o último (CE) - agora usando -1 porque não teremos espaços inúteis
+    if (input === "CE") {
+        setOperation(operation.slice(0, -1));
+        return;
+    }
+
+    // 3. Resolver o cálculo (=)
+    if (input === "=") {
+        const formula = operation.replaceAll('X', '*').replaceAll(',', '.');
+        const operationResult = eval(formula);
+        setResult(operationResult.toString());
+        return;
+    }
+
+    // 4. Se clicar em operador após um resultado, continua a conta
+    const isOperator = ['+', '-', 'X', '/'].includes(input);
+    if (result && isOperator) {
+        setOperation(result + ' ' + input + ' ');
+        setResult('');
+        return;
+    }
+
+    // 5. TRATAMENTO DA VÍRGULA (O segredo!)
+    if (input === ",") {
+        // Só adiciona se não terminar com vírgula E se não estiver vazia
+        if (!operation.endsWith(',') && operation !== "") {
+            setOperation(`${operation},`);
         }
+        return; 
+    }
+
+    // 6. TRATAMENTO DE NÚMEROS E OPERADORES
+    if (isOperator) {
+        // Adiciona espaço antes e depois do operador para o eval não quebrar
+        setOperation(`${operation} ${input} `);
+    } else {
+        // NÚMERO: Adiciona GRUDADO, sem aquele espaço que estava causando o erro
+        setOperation(`${operation}${input}`);
+    }
+}
 
 
         return(
@@ -199,7 +247,7 @@
         pt-14 px-8 pb-8
         '>
        
-    <CalculatorDisplay operation='1+1' result='2'/>
+    <CalculatorDisplay operation={operation} result={result} />
 
 <div className="flex flex-col gap-3">
   {buttons.map((row, index) => (
