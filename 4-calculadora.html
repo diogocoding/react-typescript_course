@@ -190,6 +190,7 @@
 
         const [operation, setOperation] = React.useState("");
         const [result, setResult] = React.useState("");
+        const { updateHistory } = React.useContext(CalculatorContext);
 
         function handleInputClick(input) {
     // 1. Limpar tudo (C)
@@ -207,11 +208,18 @@
 
     // 3. Resolver o cálculo (=)
     if (input === "=") {
-        const formula = operation.replaceAll('X', '*').replaceAll(',', '.');
-        const operationResult = eval(formula);
-        setResult(operationResult.toString());
-        return;
-    }
+    const formula = operation.replaceAll('X', '*').replaceAll(',', '.');
+    
+    // Nomenclatura: Constante Local
+    const operationResult = eval(formula); 
+    
+    setResult(operationResult.toString());
+
+    // Agora passamos o NOME CORRETO que acabamos de criar acima
+    updateHistory(operation, operationResult); 
+
+    return;
+}
 
     // 4. Se clicar em operador após um resultado, continua a conta
     const isOperator = ['+', '-', 'X', '/'].includes(input);
@@ -270,31 +278,92 @@
         )
     }
    
-    function OperationHistory(){
-        return(
-            <Card className='
-            w-full
-            py-10 px-8 
-            '>
-                <Text 
-                as='h1' 
-                variant='heading' 
-                className='mb-4'
-                >Histórico de operações</Text>
-                
-                    <ul className='flex flex-col gap-3'>
-                    <Text as='li' >1+1 = 2</Text>
-                    <Text as='li' >2+2 = 4</Text>
-                    <Text as='li' >3+3 = 6</Text>
-                    <Text as='li' >4+4 = 8</Text>
-                    <Text as='li' >5+5 = 10</Text>
-                    </ul>
-                
 
-            </Card>
+function OperationHistory() {
+  
+  // 2. Nomenclatura: useContext Hook
+  // Classificação: Receptor de Dados Globais (Subscriber)
+  // { history }: Desestruturação de Objeto (Object Destructuring)
+  const { history } = React.useContext(CalculatorContext);
+
+  return (
+    // 3. Nomenclatura: Card (Componente de Layout)
+    <Card className="w-full py-10 px-8">
+      
+      {/* 4. Nomenclatura: Text (Componente Polimórfico) */}
+      <Text as="h1" variant="heading" className="mb-4">
+        Histórico de Operações
+      </Text>
+
+      {/* 5. Nomenclatura: Unordered List (Lista Não Ordenada) */}
+      <ul className="flex flex-col gap-3">
+        
+        {/* 6. Nomenclatura: Método .map() (Iterador de Array) 
+               Classificação: Renderização de Lista Dinâmica */}
+        {history.map((value, index) => (
+          
+          /* 7. Nomenclatura: 'key' (Prop Especial do React)
+                 Classificação: Identificador Único de Reconciliação
+                 Uso de Template String para gerar 'item-0', 'item-1', etc. */
+          <Text key={`item-${index}`} as="li">
+            {value}
+          </Text>
+          
+        ))}
+      </ul>
+    </Card>
         )
     }
    
+const CalculatorContext = React.createContext();
+
+  function CalculatorProvider({ children }) {
+    const [history, setHistory] = React.useState([]);
+
+    // 1. Nomenclatura: Magic String (Chave de Identificação)
+    // Classificação: Constante de Configuração para o LocalStorage
+    const historyStorageKey = 'calculator-history';
+
+    // 2. Nomenclatura: useEffect Hook (Efeito de Montagem)
+    // Classificação: Recuperação de Dados (Data Retrieval)
+    // Esse bloco roda APENAS UMA VEZ quando o app abre.
+    React.useEffect(() => {
+      const savedHistory = localStorage.getItem(historyStorageKey);
+      
+      if (savedHistory) {
+        // Transformamos o texto do "armário" de volta em lista (Array)
+        setHistory(JSON.parse(savedHistory));
+      }
+    }, []);
+
+    function updateHistory(operation, parsedResult) {
+      setHistory((prev) => {
+        // Criamos a nova lista com o resultado atual
+        const newEntry = `${operation} = ${parsedResult}`;
+        const updatedHistory = [...prev, newEntry];
+
+        // 3. Nomenclatura: localStorage.setItem (Persistência)
+        // Classificação: Escrita de Dados (Data Storage)
+        // Transformamos a lista em TEXTO para caber no LocalStorage
+        localStorage.setItem(
+          historyStorageKey, 
+          JSON.stringify(updatedHistory)
+        );
+
+        return updatedHistory;
+      });
+    }
+
+    return (
+      <CalculatorContext.Provider value={{ history, updateHistory }}>
+        {children}
+      </CalculatorContext.Provider>
+    );
+  }
+
+
+
+
     function App(){
         return (
         <main className={` 
@@ -304,8 +373,14 @@
             items-center sm:items-stretch
             gap-2
             `}>
-            <Calculator />
-            <OperationHistory className='mt-10' />
+            < CalculatorProvider  >
+
+                <Calculator />
+                <OperationHistory className='mt-10' />
+
+            </CalculatorProvider>
+            
+            
         </main>
 
         )
