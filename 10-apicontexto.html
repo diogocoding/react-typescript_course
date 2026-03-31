@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocketseat - react.js - fundamentos</title>
+</head>
+<body>
+    <div id= "root"> </div> <!-- essa div será responsável por renderizar a aplicação no react -->
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+
+<script type="text/babel"> 
+
+
+    const CounterContext = React.createContext();
+
+    function CounterProvider({ children }) {
+        const [savedCounts, setSavedCounts] = React.useState([]);
+
+        function saveCount(count) {
+            setSavedCounts(prev => [...prev, count]);
+        }
+
+        return (
+            <CounterContext.Provider value={{ savedCounts, saveCount }}>
+                {children}
+            </CounterContext.Provider>
+        )
+    }
+
+function Counter (){
+
+    const [count, setCount] = React.useState(0); //useState é um hook do react que permite criar estados em componentes funcionais, ele retorna um array com o valor do estado e uma função para atualizar esse estado
+    const {saveCount} = React.useContext(CounterContext);
+
+
+
+
+    return(
+
+    <>
+    <p>Contador: {count.toFixed(2)} </p>
+    <button onClick={()=>setCount(preValue => preValue + 12.12)}>Atualizar contador</button>
+
+    <button onClick={() => setCount(preValue => preValue - 1)}>Diminuir contador</button>
+
+    <button onClick={() => saveCount(count)}>Salvar contador</button>
+    </>
+
+)
+
+}
+
+
+function CounterList() {
+    const { savedCounts } = React.useContext(CounterContext);
+
+    return (
+        <>
+        <h2>Contadores salvos:</h2>
+
+        <ul>
+            {savedCounts.map((value, index) => (
+                <li key={`item-${index}`}>{value.toFixed(2)}</li>
+            ))}
+        </ul>
+        </>
+    )
+}
+
+function App(){
+    return(
+        <main>
+            <CounterProvider>
+                <Counter />
+                <CounterList />
+            </CounterProvider>
+        </main>
+    )
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />) //aqui é onde a mágica acontece, o react pega a div com id root e renderiza o componente App dentro dela
+</script>
+
+</body>
+</html>
